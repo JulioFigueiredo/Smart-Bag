@@ -1,8 +1,6 @@
 # Smart-Bag
 Esse repositório foi criado para o desenvolvimento do projeto Smart Bag
 
-# Smart bag
-
 ## Descrição
 Essa mochila inteligente(Smartbag) tem como objetivo ajudar pessoas que, em meio
 à pressa do dia a dia, esquecem itens importantes ao sair de casa. O sistema permite que o usuário defina um horário específico, a partir do qual realiza um checklist diário dos itens cadastrados na mochila, equipados com etiquetas de identificação (tags).
