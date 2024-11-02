@@ -31,7 +31,5 @@ imagem da tela inicial do app
 
 imagem de outra tela 
 
-## Link do Diagrama UML
+## Link do fluxograma
 
-
-## Mermaid
