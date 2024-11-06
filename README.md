@@ -21,15 +21,13 @@ A Smartbag realiza um checklist automático no horário definido para verificar 
 todos os itens cadastrados estão presentes. Se estiver tudo certo, uma luz verde é ativada; caso contrário, 
 uma luz vermelha acende, indicando o nome do item que está faltando para ser inserido na mochila.
 
+### Tela de login: ###
+   
+![tela_usuario](https://github.com/user-attachments/assets/ec011ffc-ccb4-418b-96ff-1cfd16bc18b2)
 
+**Esta seção apresenta a interface de usuário para análise detalhada. Para explorar outras telas e funcionalidades, consulte o link abaixo.**
 
-1. **Tela de login:**
-
-imagem da tela inicial do app
-
-2. **Tela de cadastro de itens:**
-
-imagem de outra tela 
+https://www.figma.com/design/ZgiogyBMmow1MOsG5yo748/Untitled?node-id=0-1&node-type=canvas&t=spNQSA5RoqusY1D7-0
 
 ## Link do fluxograma
-
+https://miro.com/welcomeonboard/OXEvMXltcEJka1V0Tlc0RTJLN0xFVnNoTXZDcTR0bkFqQkVzQ3V0RE9aWWZhS0QxUkZIbERNK25pR1plc1g2TTNVbFdIRlFLZFFQdFRHSjlmeG5FUEZlU2lnczNSKzArZ0hEdXh2MlArRlVGZkFySTVlcEdSRHhuMjdJUGQ3bnchZQ==?share_link_id=356050111396
