@@ -30,4 +30,4 @@ uma luz vermelha acende, indicando o nome do item que está faltando para ser in
 https://www.figma.com/design/ZgiogyBMmow1MOsG5yo748/Untitled?node-id=0-1&node-type=canvas&t=spNQSA5RoqusY1D7-0
 
 ## Link do fluxograma
-https://miro.com/welcomeonboard/OXEvMXltcEJka1V0Tlc0RTJLN0xFVnNoTXZDcTR0bkFqQkVzQ3V0RE9aWWZhS0QxUkZIbERNK25pR1plc1g2TTNVbFdIRlFLZFFQdFRHSjlmeG5FUEZlU2lnczNSKzArZ0hEdXh2MlArRlVGZkFySTVlcEdSRHhuMjdJUGQ3bnchZQ==?share_link_id=356050111396
+[https://miro.com/welcomeonboard/OXEvMXltcEJka1V0Tlc0RTJLN0xFVnNoTXZDcTR0bkFqQkVzQ3V0RE9aWWZhS0QxUkZIbERNK25pR1plc1g2TTNVbFdIRlFLZFFQdFRHSjlmeG5FUEZlU2lnczNSKzArZ0hEdXh2MlArRlVGZkFySTVlcEdSRHhuMjdJUGQ3bnchZQ==?share_link_id=356050111396](https://miro.com/welcomeonboard/OXEvMXltcEJka1V0Tlc0RTJLN0xFVnNoTXZDcTR0bkFqQkVzQ3V0RE9aWWZhS0QxUkZIbERNK25pR1plc1g2TTNVbFdIRlFLZFFQdFRHSjlmeG5FUEZlU2lnczNSKzArZ0hEdXh2MlArRlVGZkFySTVlcEdSRHhuMjdJUGQ3bnchZQ==?share_link_id=810212520335)
