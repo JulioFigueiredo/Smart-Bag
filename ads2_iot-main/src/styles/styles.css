@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.sidebar {
+    @apply flex flex-col w-64 bg-gray-800 h-screen text-white p-4;
+}
+
+.navbar {
+    @apply flex flex-col justify-between h-screen ;
+}
+
+.navbar-top, .navbar-bottom {
+    @apply flex flex-col;
+}
+
+.navbar-bottom hr {
+    @apply mb-4;
+}
+
+.navlink {
+    @apply mb-4 p-2 rounded hover:bg-gray-700;
+}
+
+.navlink.active {
+    @apply bg-gray-700;
+}
+
+.header {
+    @apply w-full bg-gray-800 flex justify-between;
+}
+
+.header-left {
+    @apply text-2xl text-white p-4;
+}
+
+.header-right {
+    @apply text-white mt-1 pt-0;
+}
+
+.photo {
+    @apply p-1 mr-3 rounded-full h-14 w-14;
+}
+
+.card {
+    @apply p-2 rounded-lg h-full flex flex-col text-white;
+}
+
+.card-header {
+    @apply border-b-2 border-white text-xl;
+}
+
+.card-footer {
+    @apply border-t-2 border-white text-sm text-right pt-1;
+}
+
+.card-body {
+    @apply mt-2 mb-3 flex-1;
+}
+
+.formLabel {
+    @apply block text-sm font-medium text-gray-700
+}
+
+.formInput {
+    @apply mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm 
+        focus:ring-blue-500 focus:border-blue-500 sm:text-sm
+}
+
+.btnSave {
+    @apply w-full bg-blue-500 text-white py-2 px-4 rounded-md
+        hover:bg-blue-600 focus:outline-none focus:ring-2 
+        focus:ring-blue-500 focus:ring-opacity-50;
+}
