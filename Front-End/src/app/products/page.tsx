@@ -2,134 +2,155 @@
 
 import Header from "@/components/layouts/Header";
 import Sidebar from "@/components/layouts/Sidebar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+// URL base da API
+const API_URL = "http://localhost:5041/api/ObjetoStatus";
 
 export default function Management() {
-  const [tag, setTag] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"add" | "edit">("add");
-  const [tagId, setTagId] = useState("");
   const [tagName, setTagName] = useState("");
+  const [status, setStatus] = useState<boolean>(true); // Status inicial
+  const [itens, setItens] = useState<{ id: number; nome: string; status: boolean }[]>([]);
 
-  // Lista de itens inicializada vazia
-  const [itens, setItens] = useState<{ id: number; nome: string }[]>([]);
+  // Função para buscar itens ao carregar a página
+  useEffect(() => {
+    fetch(`${API_URL}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const formattedData = data.map((item: any, index: number) => ({
+          id: item.id, // Alterado para garantir que o ID do objeto esteja correto
+          nome: item.objeto,
+          status: item.status,
+        }));
+        setItens(formattedData);
+      })
+      .catch((err) => console.error("Erro ao buscar itens:", err));
+  }, []);
 
-  // Tags existentes
-  const existingTags = ["123", "456"];
+  // Função para adicionar um novo item
+  const handleAddItem = () => {
+    if (tagName.trim()) {
+      const newItem = {
+        objeto: tagName,
+        status: status,
+      };
 
-  const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTag(e.target.value);
-  };
-
-  const handleConfirmTag = () => {
-    if (tag) {
-      if (existingTags.includes(tag)) {
-        setModalType("edit");
-        setIsModalOpen(true);
-        setTagId(tag);
-        setTagName("");
-      } else {
-        alert("Tag não encontrada. Por favor, insira uma tag existente ou adicione uma nova.");
-      }
+      fetch(`${API_URL}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newItem),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Erro ao adicionar o item.");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setItens((prevItens) => [
+            ...prevItens,
+            { id: data.id, nome: tagName, status: status },
+          ]);
+          setTagName("");
+          setStatus(true); // Reseta o status
+        })
+        .catch((err) => alert(err.message));
     } else {
-      alert("Por favor, insira um ID de tag.");
+      alert("Por favor, insira o nome do item.");
     }
   };
 
-  const handleAddNewTag = () => {
-    setModalType("add");
-    setIsModalOpen(true);
-    setTagId("");
-    setTagName("");
+  // Função para editar o status de um item
+  const handleEditStatus = (id: number, newStatus: boolean) => {
+    const itemToEdit = itens.find((item) => item.id === id);
+    if (!itemToEdit) return;
+
+    fetch(`${API_URL}/${id}`, {
+      method: "PATCH", // Método PATCH para atualização parcial
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: newStatus, // Apenas o status será atualizado
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Erro ao atualizar o status.");
+        }
+        return res.json();
+      })
+      .then(() => {
+        setItens((prevItens) =>
+          prevItens.map((item) =>
+            item.id === id ? { ...item, status: newStatus } : item
+          )
+        );
+      })
+      .catch((err) => alert(err.message));
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setTagId("");
-    setTagName("");
-  };
-
-  const handleSaveTag = () => {
-    if (tagId && tagName) {
-      // Adiciona o item correspondente à tag
-      const newItem = { id: itens.length + 1, nome: tagName };
-      setItens((prevItens) => [...prevItens, newItem]);
-
-      alert(
-        modalType === "add"
-          ? `Nova tag salva: ID: ${tagId}, Nome: ${tagName}`
-          : `Tag \"${tagId}\" atualizada para: ${tagName}`
-      );
-      closeModal();
-    } else {
-      alert("Por favor, preencha todos os campos.");
-    }
-  };
-
-  const editarItem = (id: number) => {
-    const novoNome = prompt("Digite o novo nome do item:");
-    if (novoNome) {
-      setItens((prevItens) =>
-        prevItens.map((item) =>
-          item.id === id ? { ...item, nome: novoNome } : item
-        )
-      );
-    }
-  };
-
-  const excluirItem = (id: number) => {
-    if (confirm("Tem certeza que deseja excluir este item?")) {
-      setItens((prevItens) => prevItens.filter((item) => item.id !== id));
-    }
+  // Função para remover um item
+  const handleRemoveItem = (id: number) => {
+    fetch(`${API_URL}/${id}`, {
+      method: "DELETE", // Método DELETE para remover o item
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Erro ao remover o item.");
+        }
+        setItens((prevItens) => prevItens.filter((item) => item.id !== id));
+      })
+      .catch((err) => alert(err.message));
   };
 
   return (
     <div className="flex">
       <Sidebar />
       <div className="flex-1">
-        <Header title="Gerenciamento de Tags e Itens" username="Pablo Sanches" />
+        <Header />
         <main className="flex flex-col items-center justify-center h-full">
-          {/* Seção de Tags */}
           <div className="w-2/3 mb-8">
-            <h2 className="text-xl text-[#1b3c79] font-semibold mb-4">Adicionar/Editar Tag</h2>
+            <h2 className="text-xl text-[#1b3c79] font-semibold mb-4">Adicionar Novo Item</h2>
             <div className="mb-4">
-              <label htmlFor="tag" className="block mb-2 text-black">
-                ID da Tag:
+              <label htmlFor="tagName" className="block mb-2 text-black">
+                Nome do Item:
               </label>
               <input
                 type="text"
-                id="tag"
-                value={tag}
-                onChange={handleTagChange}
+                id="tagName"
+                value={tagName}
+                onChange={(e) => setTagName(e.target.value)}
                 className="text-black w-full p-2 border border-gray-300 rounded"
-                placeholder="Digite o ID da tag"
+                placeholder="Digite o nome do item"
               />
             </div>
-            <div className="flex justify-between">
-              <button
-                onClick={() => setTag("")}
-                className="bg-[#ff2f2f] text-white py-2 px-6 rounded hover:bg-[#d42727]"
+            <div className="mb-4">
+              <label htmlFor="status" className="block mb-2 text-black">
+                Status:
+              </label>
+              <select
+                id="status"
+                value={status ? "true" : "false"}
+                onChange={(e) => setStatus(e.target.value === "true")}
+                className="text-black w-full p-2 border border-gray-300 rounded"
               >
-                Cancelar
-              </button>
-              <button
-                onClick={handleConfirmTag}
-                className="bg-[#1f458d] text-white py-2 px-6 rounded hover:bg-[#4e6fae]"
-              >
-                Confirmar
-              </button>
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
             </div>
-            <div className="text-center mt-4">
-              <button
-                onClick={handleAddNewTag}
-                className="bg-[#4b8aff] text-white py-2 px-6 rounded hover:bg-[#4e6fae]"
-              >
-                Adicionar Nova Tag
-              </button>
-            </div>
+            <button
+              onClick={handleAddItem}
+              className="bg-[#4b8aff] text-white py-2 px-6 rounded hover:bg-[#4e6fae]"
+            >
+              Adicionar Item
+            </button>
           </div>
-
-          {/* Seção de Itens */}
           <div className="w-2/3">
             <h2 className="text-xl font-semibold mb-4 text-black">Lista de Itens</h2>
             {itens.length > 0 ? (
@@ -139,18 +160,21 @@ export default function Management() {
                   className="flex items-center justify-between bg-gray-100 p-4 mb-2 rounded shadow"
                 >
                   <span className="text-lg font-medium text-black">{`${item.id}: ${item.nome}`}</span>
-                  <div>
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm font-medium text-black">
+                      Status: {item.status ? "True" : "False"}
+                    </span>
                     <button
-                      onClick={() => editarItem(item.id)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded mr-2 hover:bg-blue-600"
+                      onClick={() => handleEditStatus(item.id, !item.status)}
+                      className="bg-[#f59e0b] text-white py-1 px-4 rounded hover:bg-[#d97706]"
                     >
-                      Editar
+                      Alterar para {item.status ? "False" : "True"}
                     </button>
                     <button
-                      onClick={() => excluirItem(item.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      onClick={() => handleRemoveItem(item.id)}
+                      className="bg-[#e53e3e] text-white py-1 px-4 rounded hover:bg-[#c53030]"
                     >
-                      Excluir
+                      Remover
                     </button>
                   </div>
                 </div>
@@ -160,58 +184,6 @@ export default function Management() {
             )}
           </div>
         </main>
-
-        {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded p-6 w-1/3">
-              <h3 className="text-xl font-semibold text-black mb-4">
-                {modalType === "add" ? "Adicionar Nova Tag" : "Editar Nome da Tag"}
-              </h3>
-              {modalType === "add" && (
-                <div className="mb-4">
-                  <label htmlFor="newTagId" className="block mb-2 text-black">
-                    ID da Tag:
-                  </label>
-                  <input
-                    type="text"
-                    id="newTagId"
-                    value={tagId}
-                    onChange={(e) => setTagId(e.target.value)}
-                    className="text-black w-full p-2 border border-gray-300 rounded"
-                    placeholder="Digite o ID da nova tag"
-                  />
-                </div>
-              )}
-              <div className="mb-4">
-                <label htmlFor="tagName" className="block mb-2 text-black">
-                  Nome do Item da Tag:
-                </label>
-                <input
-                  type="text"
-                  id="tagName"
-                  value={tagName}
-                  onChange={(e) => setTagName(e.target.value)}
-                  className="text-black w-full p-2 border border-gray-300 rounded"
-                  placeholder="Digite o nome do item"
-                />
-              </div>
-              <div className="flex justify-between">
-                <button
-                  onClick={closeModal}
-                  className="bg-[#ff2f2f] text-white py-2 px-6 rounded hover:bg-[#d42727]"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleSaveTag}
-                  className="bg-[#1f458d] text-white py-2 px-6 rounded hover:bg-[#4e6fae]"
-                >
-                  Salvar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
