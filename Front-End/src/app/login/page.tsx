@@ -25,7 +25,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-indigo-900">
       <form onSubmit={handleLogin} className="p-6 bg-white shadow-md rounded-lg w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Login</h2>
 
@@ -35,7 +35,7 @@ const LoginForm: React.FC = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className=" text-black w-full p-2 border border-gray-300 rounded"
+            className="text-black w-full p-2 border border-gray-300 rounded"
             placeholder="Digite seu usuário"
           />
         </div>
@@ -46,7 +46,7 @@ const LoginForm: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className=" text-black w-full p-2 border border-gray-300 rounded"
+            className="text-black w-full p-2 border border-gray-300 rounded"
             placeholder="Digite sua senha"
           />
         </div>
