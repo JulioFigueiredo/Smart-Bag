@@ -11,8 +11,13 @@ verde confirma que todos os itens estão prontos, proporcionando uma experiênci
 prática e segura para os usuários.
 
 ## Instruções de uso
-- Abra o aplicativo da Smartbag e cadastre os itens que deseja monitorar, 
-equipando-os com as etiquetas de identificação (tags) fornecidas.
+
+- Abra o aplicativo da SmartBag e registre-se ou faça login em sua conta.
+- Acesse a seção de cadastro de itens e adicione os objetos que deseja monitorar, preenchendo as informações necessárias, como nome, categoria, e detalhes adicionais.
+- Equipe os itens com as etiquetas de identificação (tags) fornecidas, fixando-as de forma segura e em locais visíveis para garantir a leitura correta pelo sistema.
+- Após cadastrar os itens, utilize o aplicativo para acompanhar seu status em tempo real, receber notificações ou alertas personalizados e gerenciar seu inventário de maneira prática e eficiente.
+
+
 
 ## Definindo o Horário de Verificação
 - No aplicativo, selecione um horário diário para a verificação automática
