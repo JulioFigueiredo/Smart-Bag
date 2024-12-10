@@ -7,6 +7,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { jsPDF } from "jspdf";
 import { saveAs } from "file-saver";
+import { format } from "date-fns"; // Importar format do date-fns
+import ptBR from 'date-fns/locale/pt-BR'; // Importar locale em português para formatação
 
 export default function Report() {
     const [parameters, setParameters] = useState({
@@ -22,21 +24,23 @@ export default function Report() {
 
     const handleGenerateReport = () => {
         alert(`Relatório gerado com os parâmetros:
-        - Início: ${parameters.startDate || "Não especificado"}
-        - Fim: ${parameters.endDate || "Não especificado"}
+        - Início: ${parameters.startDate ? format(parameters.startDate, 'dd/MM/yyyy') : "Não especificado"}
+        - Fim: ${parameters.endDate ? format(parameters.endDate, 'dd/MM/yyyy') : "Não especificado"}
         - Categoria: ${parameters.category || "Todas as categorias"}`);
     };
 
     const exportToPDF = () => {
         const doc = new jsPDF();
         doc.text("Relatório Gerado", 10, 10);
-        doc.text(`Período: ${parameters.startDate || "Não especificado"} até ${parameters.endDate || "Não especificado"}`, 10, 20);
+        doc.text(`Período: ${parameters.startDate ? format(parameters.startDate, 'dd/MM/yyyy') : "Não especificado"} até ${parameters.endDate ? format(parameters.endDate, 'dd/MM/yyyy') : "Não especificado"}`, 10, 20);
         doc.text(`Categoria: ${parameters.category || "Todas as categorias"}`, 10, 30);
         doc.save("relatorio.pdf");
     };
 
     const exportToCSV = () => {
-        const csv = `data:text/csv;charset=utf-8,Período Início,Período Fim,Categoria\n${parameters.startDate || "Não especificado"},${parameters.endDate || "Não especificado"},${parameters.category || "Todas as categorias"}`;
+        const startDate = parameters.startDate ? format(parameters.startDate, 'dd/MM/yyyy') : "Não especificado";
+        const endDate = parameters.endDate ? format(parameters.endDate, 'dd/MM/yyyy') : "Não especificado";
+        const csv = `data:text/csv;charset=utf-8,Período Início,Período Fim,Categoria\n${startDate},${endDate},${parameters.category || "Todas as categorias"}`;
         const encodedUri = encodeURI(csv);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
@@ -63,6 +67,8 @@ export default function Report() {
                                 selected={parameters.startDate}
                                 onChange={(date) => setParameters((prev) => ({ ...prev, startDate: date }))}
                                 className="mt-1 p-2 block w-full border text-black border-gray-300 rounded-md"
+                                dateFormat="dd/MM/yyyy" // Define o formato de data no DatePicker
+                                locale={ptBR} // Define o locale para português do Brasil
                             />
                         </div>
 
@@ -74,6 +80,8 @@ export default function Report() {
                                 selected={parameters.endDate}
                                 onChange={(date) => setParameters((prev) => ({ ...prev, endDate: date }))}
                                 className="mt-1 p-2 block w-full border text-black border-gray-300 rounded-md"
+                                dateFormat="dd/MM/yyyy" // Define o formato de data no DatePicker
+                                locale={ptBR} // Define o locale para português do Brasil
                             />
                         </div>
 
@@ -84,7 +92,6 @@ export default function Report() {
                             <select
                                 id="category"
                                 name="category"
-                                
                                 value={parameters.category}
                                 onChange={handleInputChange}
                                 className="mt-1 block w-full p-2 border text-black border-gray-300 rounded-md"
