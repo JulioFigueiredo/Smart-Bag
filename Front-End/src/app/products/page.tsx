@@ -9,22 +9,26 @@ const API_URL = "http://localhost:5041/api/ObjetoStatus";
 
 export default function Management() {
   const [tagName, setTagName] = useState("");
-  const [status, setStatus] = useState<boolean>(true); // Status inicial
-  const [itens, setItens] = useState<{ id: number; nome: string; status: boolean }[]>([]);
+  const [status, setStatus] = useState<boolean>(true);
+  const [itens, setItens] = useState<{ nome: string; status: boolean }[]>([]);
 
   // Função para buscar itens ao carregar a página
   useEffect(() => {
     fetch(`${API_URL}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Erro ao buscar itens: ${res.status} ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then((data) => {
-        const formattedData = data.map((item: any, index: number) => ({
-          id: item.id, // Alterado para garantir que o ID do objeto esteja correto
+        const formattedData = data.map((item: any) => ({
           nome: item.objeto,
           status: item.status,
         }));
         setItens(formattedData);
       })
-      .catch((err) => console.error("Erro ao buscar itens:", err));
+      .catch((err) => console.error(err.message));
   }, []);
 
   // Função para adicionar um novo item
@@ -44,17 +48,17 @@ export default function Management() {
       })
         .then((res) => {
           if (!res.ok) {
-            throw new Error("Erro ao adicionar o item.");
+            throw new Error(`Erro ao adicionar o item: ${res.status} ${res.statusText}`);
           }
           return res.json();
         })
-        .then((data) => {
+        .then(() => {
           setItens((prevItens) => [
             ...prevItens,
-            { id: data.id, nome: tagName, status: status },
+            { nome: tagName, status: status },
           ]);
           setTagName("");
-          setStatus(true); // Reseta o status
+          setStatus(true);
         })
         .catch((err) => alert(err.message));
     } else {
@@ -62,51 +66,80 @@ export default function Management() {
     }
   };
 
-  // Função para editar o status de um item
-  const handleEditStatus = (id: number, newStatus: boolean) => {
-    const itemToEdit = itens.find((item) => item.id === id);
-    if (!itemToEdit) return;
+  // Função para editar o status de um item usando o nome
+  const handleEditStatus = (nome: string, newStatus: boolean) => {
+    const updatedItem = {
+      objeto: nome,
+      status: newStatus,
+    };
 
-    fetch(`${API_URL}/${id}`, {
-      method: "PATCH", // Método PATCH para atualização parcial
+    fetch(`${API_URL}/${encodeURIComponent(nome)}`, { // Codificando o nome para a URL
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        status: newStatus, // Apenas o status será atualizado
-      }),
+      body: JSON.stringify(updatedItem),
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Erro ao atualizar o status.");
+          throw new Error(`Erro ao atualizar o status: ${res.status} ${res.statusText}`);
         }
         return res.json();
       })
       .then(() => {
         setItens((prevItens) =>
           prevItens.map((item) =>
-            item.id === id ? { ...item, status: newStatus } : item
+            item.nome === nome ? { ...item, status: newStatus } : item
           )
         );
       })
       .catch((err) => alert(err.message));
   };
 
-  // Função para remover um item
-  const handleRemoveItem = (id: number) => {
-    fetch(`${API_URL}/${id}`, {
-      method: "DELETE", // Método DELETE para remover o item
+  // Função para remover um item usando o nome
+  const handleRemoveItem = (nome: string) => {
+    fetch(`${API_URL}/${encodeURIComponent(nome)}`, { // Codificando o nome para a URL
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Erro ao remover o item.");
+          throw new Error(`Erro ao remover o item: ${res.status} ${res.statusText}`);
         }
-        setItens((prevItens) => prevItens.filter((item) => item.id !== id));
+        setItens((prevItens) => prevItens.filter((item) => item.nome !== nome));
       })
       .catch((err) => alert(err.message));
+  };
+
+  // Função para editar o status via prompt
+  const handleStatusPrompt = () => {
+    const nome = prompt("Digite o nome do item que deseja editar o status:");
+    if (nome) {
+      const item = itens.find((item) => item.nome === nome);
+      if (item) {
+        const newStatus = confirm("Deseja alterar o status para 'True'?") ? true : false;
+        handleEditStatus(nome, newStatus);
+      } else {
+        alert("Item não encontrado.");
+      }
+    }
+  };
+
+  // Função para remover item via prompt
+  const handleRemovePrompt = () => {
+    const nome = prompt("Digite o nome do item que deseja remover:");
+    if (nome) {
+      const item = itens.find((item) => item.nome === nome);
+      if (item) {
+        if (confirm(`Tem certeza que deseja remover o item "${nome}"?`)) {
+          handleRemoveItem(nome);
+        }
+      } else {
+        alert("Item não encontrado.");
+      }
+    }
   };
 
   return (
@@ -151,37 +184,38 @@ export default function Management() {
               Adicionar Item
             </button>
           </div>
-          <div className="w-2/3">
+          <div className="w-2/3 mb-8">
             <h2 className="text-xl font-semibold mb-4 text-black">Lista de Itens</h2>
             {itens.length > 0 ? (
-              itens.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between bg-gray-100 p-4 mb-2 rounded shadow"
-                >
-                  <span className="text-lg font-medium text-black">{`${item.id}: ${item.nome}`}</span>
-                  <div className="flex items-center space-x-4">
-                    <span className="text-sm font-medium text-black">
-                      Status: {item.status ? "True" : "False"}
-                    </span>
-                    <button
-                      onClick={() => handleEditStatus(item.id, !item.status)}
-                      className="bg-[#f59e0b] text-white py-1 px-4 rounded hover:bg-[#d97706]"
-                    >
-                      Alterar para {item.status ? "False" : "True"}
-                    </button>
-                    <button
-                      onClick={() => handleRemoveItem(item.id)}
-                      className="bg-[#e53e3e] text-white py-1 px-4 rounded hover:bg-[#c53030]"
-                    >
-                      Remover
-                    </button>
+              <div className="space-y-4">
+                {itens.map((item) => (
+                  <div
+                    key={item.nome} // Agora usamos 'nome' como chave
+                    className="flex items-center justify-between bg-gray-100 p-4 mb-2 rounded shadow"
+                  >
+                    <span className="text-lg font-medium text-black">{`${item.nome}: ${item.status ? "True" : "False"}`}</span>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
               <p className="text-gray-500">Nenhum item disponível.</p>
             )}
+          </div>
+
+          {/* Botões de editar status e remover item */}
+          <div className="flex space-x-4">
+            <button
+              onClick={handleStatusPrompt}
+              className="bg-[#15466d] text-white py-2 px-6 rounded hover:bg-[#123450]"
+            >
+              Editar Status
+            </button>
+            <button
+              onClick={handleRemovePrompt}
+              className="bg-[#e53e3e] text-white py-2 px-6 rounded hover:bg-[#c53030]"
+            >
+              Remover Item
+            </button>
           </div>
         </main>
       </div>
